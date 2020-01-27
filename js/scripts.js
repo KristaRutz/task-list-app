@@ -26,17 +26,17 @@ TaskList.prototype.assignId = function() {
   return this.currentId;
 }
 
-TaskList.prototype.toString = function() {
-  var string = "Current List: ";
+TaskList.prototype.toText = function() {
+  var string = `<ol>Current List: `;
   var j = 1;
   for (var i = 0; i < this.tasks.length; i++) {
     if (this.tasks[i]) {
-      string = string + `<input type="checkbox" name="deleteOption" value="${i+1}"> ${j}) ${this.tasks[i].description} `;
+      string = string + `<li><input type="checkbox" name="deleteOption" value="${i+1}"> ${this.tasks[i].description}</li>`;
       j ++;
       // string = string + " " + (i+1) + ")" + this.tasks[i].description + " "
     }
   }
-  return string;
+  return string + "</ol>";
 }
 
 function Task(description) {
@@ -52,10 +52,11 @@ $(document).ready(function() {
   $("#inputTask").submit(function(event) {
     event.preventDefault();
     console.log("input submitted")
+    $("#deleteForm").show();
     $("#currentTaskList").text("")
     var newTask = new Task($("#newTask").val());
     userTaskList.addTask(newTask);
-    $("#currentTaskList").append(userTaskList.toString());
+    $("#currentTaskList").append(userTaskList.toText());
   });
 
   $("#deleteForm").submit(function(event) {
