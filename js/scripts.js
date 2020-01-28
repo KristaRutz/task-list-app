@@ -9,8 +9,19 @@ TaskList.prototype.addTask = function(task) {
   this.tasks.push(task);
 }
 
+TaskList.prototype.selectTask = function(id) {
+  for (var i = 0; i < this.tasks.length; i++) {
+    if (this.tasks[i]) {
+      if (this.tasks[i].id == id) {
+        return this.tasks[i];
+      }
+    }
+  }
+  return false;
+}
+
 TaskList.prototype.deleteTask = function(id) {
-  console.log("you tried to delete " + id);
+
   delete this.tasks[id-1];
     // for (var i = 0; i < this.tasks.length; i++) {
     //   if (this.tasks[i].id == id){
@@ -27,7 +38,7 @@ TaskList.prototype.assignId = function() {
 }
 
 TaskList.prototype.toText = function() {
-  var string = `<ol>Current List: `;
+  var string = ``;
   var j = 1;
   for (var i = 0; i < this.tasks.length; i++) {
     if (this.tasks[i]) {
@@ -48,35 +59,44 @@ var laundry = new Task("wash dirty clothes");
 // User Interface Logic ----------------------
 $(document).ready(function() {
   userTaskList = new TaskList;
+  userCompleteList = new TaskList;
 
   $("#inputTask").submit(function(event) {
     event.preventDefault();
-    console.log("input submitted")
     $("#deleteForm").show();
-    $("#currentTaskList").text("")
+    $("#currentItems").text("")
     var newTask = new Task($("#newTask").val());
     userTaskList.addTask(newTask);
-    $("#currentTaskList").append(userTaskList.toText());
+    $("#currentItems").append(userTaskList.toText());
   });
 
   $("#deleteForm").submit(function(event) {
     event.preventDefault();
-    console.log("delete button was pressed.");
 
     var userResponses = [];
     $("input:checkbox[name=deleteOption]:checked").each(function(){
       var completeTasks = $(this).val();
       userResponses.push(completeTasks);
-      console.log(completeTasks);
-      console.log(userResponses);
+      //console.log(completeTasks);
+      //console.log(userResponses);
     })
+
+    for (var i = 0; i < userResponses.length; i++){
+      var deletedId = (parseInt(userResponses[i]));
+      var deletedTask = userTaskList.selectTask(deletedId);
+      console.log(deletedId, deletedTask);
+      userCompleteList.addTask(deletedTask);
+    }
 
     for (var i = 0; i < userResponses.length; i++){
       userTaskList.deleteTask(parseInt(userResponses[i]));
     }
+
     console.log(userTaskList);
-    $("#currentTaskList").text("")
-    $("#currentTaskList").append(userTaskList.toString());
+    console.log(userCompleteList);
+    $("#currentItems").text("")
+    $("#currentItems").append(userTaskList.toText());
+    $("#completeItems").append(userCompleteList.toText());
   });
 })
 
